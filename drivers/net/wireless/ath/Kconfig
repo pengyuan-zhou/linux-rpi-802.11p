@@ -26,6 +26,7 @@ config ATH_USER_REGD
 	bool "Force Atheros drivers to respect the user's regdomain settings"
 	default y
 	---help---
+        pengzhou: added for 802.11p configuration
 	Atheros' idea of regulatory handling is that the EEPROM of the card defines
 	the regulatory limits and the user is only allowed to restrict the settings
 	even further, even if the country allows frequencies or power levels that

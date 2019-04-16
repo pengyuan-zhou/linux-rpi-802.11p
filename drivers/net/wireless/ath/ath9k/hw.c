@@ -1258,7 +1258,7 @@ static void ath9k_hw_set_operating_mode(struct ath_hw *ah, int opmode)
 	ENABLE_REG_RMW_BUFFER(ah);
 	switch (opmode) {
 	case NL80211_IFTYPE_ADHOC:
-	case NL80211_IFTYPE_OCB:
+	case NL80211_IFTYPE_OCB: /*pengzhou: add for 802.11p*/
 		if (!AR_SREV_9340_13(ah)) {
 			set |= AR_STA_ID1_ADHOC;
 			REG_SET_BIT(ah, AR_CFG, AR_CFG_AP_ADHOC_INDICATION);

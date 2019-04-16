@@ -121,7 +121,6 @@ struct ieee80211_channel *ieee80211_get_channel(struct wiphy *wiphy, int freq)
 	struct ieee80211_supported_band *sband;
 	int i;
 
-        //pengzhou: debug
 	for (band = 0; band < NUM_NL80211_BANDS; band++) {
 		sband = wiphy->bands[band];
 		if (!sband)
@@ -914,7 +913,7 @@ int cfg80211_change_iface(struct cfg80211_registered_device *rdev,
 		case NL80211_IFTYPE_ADHOC:
 			cfg80211_leave_ibss(rdev, dev, false);
 			break;
-		case NL80211_IFTYPE_OCB:
+		case NL80211_IFTYPE_OCB: /* pengzhou: add for 802.11p */
 			printk("%s:%s leaving OCB\n",__FILE__,__FUNCTION__);
 			cfg80211_leave_ocb(rdev, dev);
 			break;
@@ -1125,7 +1124,7 @@ static u32 cfg80211_calculate_bitrate_vht(struct rate_info *rate)
 		idx = 1;
 		break;
 	case RATE_INFO_BW_5:
-	case RATE_INFO_BW_10: //802.11p
+	case RATE_INFO_BW_10: 
 	//default:
 		//goto warn;
 	case RATE_INFO_BW_20:

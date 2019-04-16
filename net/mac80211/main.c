@@ -643,7 +643,7 @@ struct ieee80211_hw *ieee80211_alloc_hw_nm(size_t priv_data_len,
 	INIT_LIST_HEAD(&local->chanctx_list);
 	mutex_init(&local->chanctx_mtx);
 
-	/* Scanning not supported in 802.11p */
+	/*pengzhou :  Scanning not supported in 802.11p */
 	/* TODO check if this is called before or after dot11OCBActiveate=1 */
 	if(local->hw.wiphy->dot11OCBActivated == 0) {
 		INIT_DELAYED_WORK(&local->scan_work, ieee80211_scan_work);
@@ -712,7 +712,7 @@ static int ieee80211_init_cipher_suites(struct ieee80211_local *local)
 
 
 	if(local->hw.wiphy->dot11OCBActivated == 1) {
-		/* we don't use encryption in 802.11p */
+		/* pengzhou : we don't use encryption in 802.11p */
 		printk("%s:%s no ciphers necessary for 802.11p\n",__FILE__,__FUNCTION__);
 		return -EOPNOTSUPP; //0;
 	}
@@ -929,7 +929,7 @@ int ieee80211_register_hw(struct ieee80211_hw *hw)
 	 */
 
 //#ifdef CONFIG_MAC80211_OCB_DEBUG
-///* Enable all the time */
+///* pengzhou :  Enable all the time */
 	hw->wiphy->interface_modes |= BIT(NL80211_IFTYPE_OCB);
 	hw->wiphy->software_iftypes |= BIT(NL80211_IFTYPE_OCB);
 //#endif
@@ -999,7 +999,7 @@ int ieee80211_register_hw(struct ieee80211_hw *hw)
 
 		for (j = 0; j < c->n_limits; j++)
 			if (( (c->limits[j].types & BIT(NL80211_IFTYPE_ADHOC)) ||
-				(c->limits[j].types & BIT(NL80211_IFTYPE_OCB))) &&
+				(c->limits[j].types & BIT(NL80211_IFTYPE_OCB))) &&  /* pengzhou : add for 802.11p */
 				c->limits[j].max > 1) {
 				printk("%s:%s mac80211 doesn't support more than one IBSS interface right now\n",__FILE__,__FUNCTION__);
 				return -EOPNOTSUPP;

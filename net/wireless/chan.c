@@ -24,6 +24,7 @@ void cfg80211_chandef_create(struct cfg80211_chan_def *chandef,
 	chandef->center_freq2 = 0;
 
 	switch (chan_type) {
+	/*pengzhou: add for 802.11p */
 	case NL80211_CHAN_5MHZ:
 	/* should 5MHz be classified as 20_NOHT? */
 		chandef->width = NL80211_CHAN_WIDTH_5;
@@ -227,7 +228,7 @@ cfg80211_chandef_compatible(const struct cfg80211_chan_def *c1,
 	 * can't be compatible if one of them is 5 or 10 MHz,
 	 * but they don't have the same width.
 	 */
-	/* TODO: disabled this - seems to return NULL any time 5 or 10MHz
+	/* pengzhou : disabled this - seems to return NULL any time 5 or 10MHz
 	if (c1->width == NL80211_CHAN_WIDTH_5 ||
 	    c1->width == NL80211_CHAN_WIDTH_10 ||
 	    c2->width == NL80211_CHAN_WIDTH_5 ||
@@ -358,7 +359,7 @@ int cfg80211_chandef_dfs_required(struct wiphy *wiphy,
 		return -EINVAL;
 
 	switch (iftype) {
-	case NL80211_IFTYPE_OCB:
+	case NL80211_IFTYPE_OCB: /*pengzhou: add for 802.11p */
 		printk("%s:%s iftype is ocb\n",__FILE__,__FUNCTION__);
 	case NL80211_IFTYPE_ADHOC:
 	case NL80211_IFTYPE_AP:
@@ -760,7 +761,7 @@ bool cfg80211_chandef_usable(struct wiphy *wiphy,
 
 	switch (chandef->width) {
 	case NL80211_CHAN_WIDTH_5:
-		prohibited_flags |= IEEE80211_CHAN_NO_10MHZ;
+		prohibited_flags |= IEEE80211_CHAN_NO_10MHZ; /*pengzhou: add for 802.11p */
 		width = 5;
 		break;
 	case NL80211_CHAN_WIDTH_10:
@@ -951,7 +952,7 @@ static bool _cfg80211_reg_can_beacon(struct wiphy *wiphy,
 	bool res;
 	u32 prohibited_flags = IEEE80211_CHAN_DISABLED |
 			       IEEE80211_CHAN_RADAR |
-			       IEEE80211_CHAN_OCB_ONLY;
+			       IEEE80211_CHAN_OCB_ONLY; /*pengzhou: add for 802.11p */
 
 	trace_cfg80211_reg_can_beacon(wiphy, chandef, iftype, check_no_ir);
 
@@ -974,6 +975,7 @@ bool cfg80211_reg_can_beacon(struct wiphy *wiphy,
 			     struct cfg80211_chan_def *chandef,
 			     enum nl80211_iftype iftype)
 {
+	/*pengzhou: add for 802.11p */
 	if(iftype == NL80211_IFTYPE_OCB) {
 		printk("%s:%s no beaconing allowed in 802.11p\n",__FILE__,__FUNCTION__);
 		return -EOPNOTSUPP;

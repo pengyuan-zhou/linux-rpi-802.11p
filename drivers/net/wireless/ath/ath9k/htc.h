@@ -482,7 +482,7 @@ struct ath9k_htc_priv {
 	u8 num_sta_vif;
 	u8 num_sta_assoc_vif;
 	u8 num_ap_vif;
-	u8 num_ocb_vif;
+	u8 num_ocb_vif;  /*pengzhou: add for 802.11p*/
 
 	u16 curtxpow;
 	u16 txpowlimit;

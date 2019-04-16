@@ -17,6 +17,7 @@
 #include <linux/dma-mapping.h>
 #include "ath9k.h"
 #include "ar9003_mac.h"
+/*pengzhou: compiling need some definition from this file*/
 #include "net/mac80211.h"
 
 #define BITS_PER_BYTE           8
@@ -2494,7 +2495,7 @@ static void ath_tx_complete(struct ath_softc *sc, struct sk_buff *skb,
 		else
 			tx_info->flags |= IEEE80211_TX_STAT_ACK;
 	}
-
+        /*pengzhou: add for 802.11p*/
         if (IS_CHAN_HALF_RATE(sc->sc_ah->curchan))
                 tx_info->flags |= IEEE80211_TX_CTL_10MHZ;
         else if (IS_CHAN_QUARTER_RATE(sc->sc_ah->curchan))

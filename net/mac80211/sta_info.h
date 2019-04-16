@@ -101,7 +101,7 @@ enum ieee80211_sta_info_flags {
 	WLAN_STA_MPSP_OWNER,
 	WLAN_STA_MPSP_RECIPIENT,
 	WLAN_STA_PS_DELIVER,
-	WLAN_STA_OCB,
+	WLAN_STA_OCB, /* pengzhou : add for 802.11p */
 
 	NUM_WLAN_STA_FLAGS,
 };

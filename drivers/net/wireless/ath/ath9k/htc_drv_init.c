@@ -753,6 +753,7 @@ static void ath9k_set_hw_capab(struct ath9k_htc_priv *priv,
 			    WIPHY_FLAG_HAS_CHANNEL_SWITCH;
 
 	hw->wiphy->flags |= WIPHY_FLAG_SUPPORTS_TDLS;
+	//pengzhou: add for 802.11p's channel width
 	hw->wiphy->flags |= WIPHY_FLAG_SUPPORTS_5_10_MHZ;
 
 	hw->queues = 4;

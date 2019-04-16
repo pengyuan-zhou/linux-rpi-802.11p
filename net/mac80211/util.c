@@ -1164,7 +1164,7 @@ void ieee80211_set_wmm_default(struct ieee80211_sub_if_data *sdata,
 	int ac;
 	bool use_11b;
 	bool is_ocb; /* Use another EDCA parameters if dot11OCBActivated=true */
-	is_ocb = (sdata->vif.type == NL80211_IFTYPE_OCB);
+	is_ocb = (sdata->vif.type == NL80211_IFTYPE_OCB); /* pengzhou : add for 802.11p */
 
 	if(is_ocb) {
 		printk("%s:%s ocb EDCA parameters being set\n",__FILE__,__FUNCTION__);

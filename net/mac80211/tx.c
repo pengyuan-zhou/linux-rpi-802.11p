@@ -593,7 +593,7 @@ ieee80211_tx_h_select_key(struct ieee80211_tx_data *tx)
 		tx->key = NULL;
 
 	else if(tx->sdata->vif.type == NL80211_IFTYPE_OCB)
-		tx->key = NULL; // added for 802.11p
+		tx->key = NULL; // pengzhou : added for 802.11p
 
 	else if (tx->sta &&
 		 (key = rcu_dereference(tx->sta->ptk[tx->sta->ptk_idx])))
@@ -1017,7 +1017,7 @@ ieee80211_tx_h_encrypt(struct ieee80211_tx_data *tx)
 		return TX_CONTINUE;
 
 	if(tx->sdata->vif.type == NL80211_IFTYPE_OCB) {
-		/* no encryption done in 802.11p */
+		/* pengzhou :  no encryption done in 802.11p */
 		return TX_CONTINUE;
 	}
 
@@ -1232,7 +1232,7 @@ ieee80211_tx_prepare(struct ieee80211_sub_if_data *sdata,
 	}
 
 
-	/* just added this */
+	/* pengzhou added for 802.11p */
 	if ((sdata->vif.type == NL80211_IFTYPE_OCB) && (!tx->sta) &&
 	    (tx->flags & IEEE80211_TX_UNICAST)) {
 		printk("%s:%s Unicast rx no sta clause\n",__FILE__,__FUNCTION__);
@@ -1764,7 +1764,7 @@ static int invoke_tx_handlers_early(struct ieee80211_tx_data *tx)
 	} while (0)
 
 
-	/* 802.11p doesn't require these functions */
+	/* pengzhou: 802.11p doesn't require these functions */
 	if(tx->local->hw.wiphy->dot11OCBActivated == 0) {
 		CALL_TXH(ieee80211_tx_h_dynamic_ps);
 		CALL_TXH(ieee80211_tx_h_check_assoc);
@@ -1807,7 +1807,7 @@ static int invoke_tx_handlers_late(struct ieee80211_tx_data *tx)
 	}
 
 	if(tx->local->hw.wiphy->dot11OCBActivated == 0) {
-		/* 802.11p doesn't support encryption */
+		/* pengzhou : 802.11p doesn't support encryption */
 		CALL_TXH(ieee80211_tx_h_michael_mic_add);
 	}
 
@@ -1817,7 +1817,7 @@ static int invoke_tx_handlers_late(struct ieee80211_tx_data *tx)
 	/* handlers after fragment must be aware of tx info fragmentation! */
 	CALL_TXH(ieee80211_tx_h_stats);
 	if(tx->local->hw.wiphy->dot11OCBActivated == 0) {
-		/* 802.11p doesn't support encryption */
+		/* pengzhou : 802.11p doesn't support encryption */
 		CALL_TXH(ieee80211_tx_h_encrypt);
 	}
 	if (!ieee80211_hw_check(&tx->local->hw, HAS_RATE_CONTROL))
@@ -1978,7 +1978,7 @@ void ieee80211_xmit(struct ieee80211_sub_if_data *sdata,
 	struct ieee80211_hdr *hdr;
 	int headroom;
 	bool may_encrypt;
-
+        /* pengzhou : add for 802.11p */
 	may_encrypt = !(info->flags & IEEE80211_TX_INTFL_DONT_ENCRYPT) & !(local->hw.wiphy->dot11OCBActivated);
 
 	headroom = local->tx_headroom;
@@ -2467,6 +2467,7 @@ static struct sk_buff *ieee80211_build_hdr(struct ieee80211_sub_if_data *sdata,
 	fc = cpu_to_le16(IEEE80211_FTYPE_DATA | IEEE80211_STYPE_DATA);
 
 	printk("%s:%s b4 hdr config \n",__FILE__,__FUNCTION__);
+	/* pengzhou : add for 802.11p */
 	static const u8 bssid_wildcard[ETH_ALEN] __aligned(2)
 		= { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
 
@@ -2638,14 +2639,14 @@ static struct sk_buff *ieee80211_build_hdr(struct ieee80211_sub_if_data *sdata,
 		multicast = true;
 		memcpy(hdr.addr1, skb->data, ETH_ALEN);
 		memcpy(hdr.addr2, skb->data + ETH_ALEN, ETH_ALEN);
-		memcpy(hdr.addr3, bssid_wildcard, ETH_ALEN);
+		memcpy(hdr.addr3, bssid_wildcard, ETH_ALEN); /* pengzhou : add for 802.11p */
 		hdrlen = 24;
 		chanctx_conf = rcu_dereference(sdata->vif.chanctx_conf);
 		if (!chanctx_conf) {
 			ret = -ENOTCONN;
 			goto free;
 		}
-		band = NL80211_BAND_5GHZ;
+		band = NL80211_BAND_5GHZ; /* pengzhou : add for 802.11p */
 		break;
 	case NL80211_IFTYPE_ADHOC:
 		/* DA SA BSSID */
@@ -2678,7 +2679,7 @@ static struct sk_buff *ieee80211_build_hdr(struct ieee80211_sub_if_data *sdata,
 	}
 
 	if(sdata->vif.type == NL80211_IFTYPE_OCB) {
-		/* making OCB authorized to tx/rx by default - necessary for 802.11p ?*/
+		/* pengzhou :  making OCB authorized to tx/rx by default - necessary for 802.11p ?*/
 	//	if(sta) {
 		//	set_sta_flag(sta,WLAN_STA_AUTHORIZED);
  		set_sta_flag(sta,WLAN_STA_OCB);
@@ -2819,7 +2820,7 @@ static struct sk_buff *ieee80211_build_hdr(struct ieee80211_sub_if_data *sdata,
 	} else
 		memcpy(skb_push(skb, hdrlen), &hdr, hdrlen);
 
-	// flags to bypass state machine
+	// pengzhou : flags to bypass state machine
 	if (local->hw.wiphy->dot11OCBActivated ) {
 		printk("%s:%s setting OCB flags to bypass state machine \n",__FILE__,__FUNCTION__);
 		info_flags |= IEEE80211_TX_INTFL_DONT_ENCRYPT;
@@ -2870,6 +2871,7 @@ void ieee80211_check_fast_xmit(struct sta_info *sta)
 	struct ieee80211_hdr *hdr = (void *)build.hdr;
 	struct ieee80211_chanctx_conf *chanctx_conf;
 	__le16 fc;
+	/* pengzhou : add for 802.11p */
 	static const u8 bssid_wildcard[ETH_ALEN] __aligned(2)
 		= { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
 
@@ -2987,7 +2989,7 @@ void ieee80211_check_fast_xmit(struct sta_info *sta)
 		build.sa_offs = offsetof(struct ieee80211_hdr, addr3);
 		build.hdr_len = 24;
 		break;
-
+       /* pengzhou : add for 802.11p */
 	case NL80211_IFTYPE_OCB:
 		printk("%s:%s OCB not configured for fast xmit\n",__FILE__,__FUNCTION__);
 		/* DA SA BSSID */
@@ -3011,6 +3013,7 @@ void ieee80211_check_fast_xmit(struct sta_info *sta)
 	 * this function after doing so. For a single CPU that would be enough,
 	 * for multiple see the comment above.
 	 */
+/* pengzhou : add for 802.11p */
 if(sdata->vif.type != NL80211_IFTYPE_OCB) {
 	build.key = rcu_access_pointer(sta->ptk[sta->ptk_idx]);
 	if (!build.key)
@@ -4304,7 +4307,7 @@ __ieee80211_beacon_get(struct ieee80211_hw *hw,
 
 
 	if(sdata->vif.type == NL80211_IFTYPE_OCB) {
-		/* No probing with 802.11p */
+		/* pengzhou :  No probing with 802.11p */
 		printk("%s:%s no beacon with OCB\n",__FILE__,__FUNCTION__);
 		return NULL;
 	}
@@ -4524,7 +4527,7 @@ struct sk_buff *ieee80211_proberesp_get(struct ieee80211_hw *hw,
 	struct ieee80211_sub_if_data *sdata = vif_to_sdata(vif);
 
 	if(sdata->vif.type == NL80211_IFTYPE_OCB) {
-		/* No probing with 802.11p */
+		/* pengzhou : No probing with 802.11p */
 		printk("%s:%s no probing with OCB\n",__FILE__,__FUNCTION__);
 		return NULL;
 	}
@@ -4670,7 +4673,7 @@ struct sk_buff *ieee80211_probereq_get(struct ieee80211_hw *hw,
 
 	/* TODO: is this needed? */
 	if(local->hw.wiphy->dot11OCBActivated == 1) {
-		/* No probing with 802.11p */
+		/* pengzhou : No probing with 802.11p */
 		printk("%s:%s no probing with OCB\n",__FILE__,__FUNCTION__);
 		return NULL;
 	}

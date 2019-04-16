@@ -115,7 +115,7 @@ static u32 __ieee80211_recalc_idle(struct ieee80211_local *local,
 	active = force_active ||
 		 !list_empty(&local->chanctx_list) ||
 		 local->monitors ||
-		 local->ocbs;
+		 local->ocbs; /* pengzhou : add for 802.11p */
 
 	working = !local->ops->remain_on_channel &&
 		  !list_empty(&local->roc_list);
@@ -537,7 +537,7 @@ int ieee80211_do_open(struct wireless_dev *wdev, bool coming_up)
 		break;
 		}
 	case NL80211_IFTYPE_OCB:
-		/* set dot11OCBActivated to true */
+		/* pengzhou : set dot11OCBActivated to true */
 		local->hw.wiphy->dot11OCBActivated = 1;	
 		printk("%s:%s setting OCB active flags\n",__FILE__,__FUNCTION__);
 		break;
@@ -654,7 +654,7 @@ int ieee80211_do_open(struct wireless_dev *wdev, bool coming_up)
 		if (sdata->vif.type != NL80211_IFTYPE_P2P_DEVICE &&
 		    sdata->vif.type != NL80211_IFTYPE_NAN)
 			changed |= ieee80211_reset_erp_info(sdata);
-
+                /* pengzhou : add for 802.11p */
 		if (sdata->vif.type == NL80211_IFTYPE_OCB) {
 			printk("goto... local->ocbs++\n");
 			local->ocbs++;
@@ -664,9 +664,9 @@ int ieee80211_do_open(struct wireless_dev *wdev, bool coming_up)
 			changed |= BSS_CHANGED_BEACON;
 
 			/*
-			* 			 * Disable idle -- when chanctx will be used,
-			* 			 			 * this will be unnecessary
-			* 			 			 			 */
+			* Disable idle -- when chanctx will be used,
+			* this will be unnecessary
+			*/
 			sdata->vif.bss_conf.idle = false;
 			changed |= BSS_CHANGED_IDLE;
 
@@ -686,7 +686,6 @@ int ieee80211_do_open(struct wireless_dev *wdev, bool coming_up)
 			if(local->hw.wiphy->dot11OCBActivated == 1)
 				printk("%s:%s OCB activation worked\n",__FILE__,__FUNCTION__);
 
-			/* TODO: Should we add the flags to mark as auth/assoc/etc here? */
 		}
 		ieee80211_bss_info_change_notify(sdata, changed);
 
@@ -1020,6 +1019,7 @@ static void ieee80211_do_stop(struct ieee80211_sub_if_data *sdata,
 
 		spin_unlock_bh(&sdata->u.nan.func_lock);
 		break;
+	/* pengzhou : add for 802.11p */
 	case NL80211_IFTYPE_OCB:
 		local->ocbs--;
 		if (local->ocbs == 0) {
@@ -1399,12 +1399,6 @@ static void ieee80211_iface_work(struct work_struct *work)
 				break;
 			ieee80211_mesh_rx_queued_mgmt(sdata, skb);
 			break;
-		//case NL80211_IFTYPE_OCB:
-			//ieee80211_ocb_rx_queued_mgmt(sdata, skb);
-			//break;
-
-			//printk("%s:%s OCB mode unexpected frame type\n",__FILE__,__FUNCTION__);
-			/* TODO: Configure OCB to accept Action and TSF type mgmt frames */
 
 		default:
 			WARN(1, "frame for unexpected interface type");
@@ -1449,6 +1443,7 @@ static void ieee80211_recalc_smps_work(struct work_struct *work)
 static void ieee80211_setup_sdata(struct ieee80211_sub_if_data *sdata,
 				  enum nl80211_iftype type)
 {
+	// pengzhou
 	static const u8 bssid_wildcard[ETH_ALEN] __aligned(2)= {0xff, 0xff, 0xff,
 						    0xff, 0xff, 0xff};
 

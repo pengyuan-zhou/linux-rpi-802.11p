@@ -641,6 +641,7 @@ static struct sk_buff* ath9k_htc_tx_get_packet(struct ath9k_htc_priv *priv,
 
 void ath9k_htc_txstatus(struct ath9k_htc_priv *priv, void *wmi_event)
 {
+	//pengzhou: original code reports bug
 	struct wmi_event_txstatus *txs = (struct wmi_event_txstatus *)wmi_event;
 	struct __wmi_event_txstatus *__txs;
 	struct sk_buff *skb;
@@ -1037,7 +1038,7 @@ static bool ath9k_rx_prepare(struct ath9k_htc_priv *priv,
 	rx_status->freq = ah->curchan->chan->center_freq;
 	rx_status->antenna = rx_stats.rs_antenna;
 	rx_status->flag |= RX_FLAG_MACTIME_END;
-
+        //pengzhou: add for 802.11p
         if (IS_CHAN_HALF_RATE(priv->ah->curchan))
                 rx_status->flag |= RX_FLAG_10MHZ;
         else if (IS_CHAN_QUARTER_RATE(priv->ah->curchan))

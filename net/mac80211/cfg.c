@@ -2203,7 +2203,7 @@ static int ieee80211_scan(struct wiphy *wiphy,
 
 	switch (ieee80211_vif_type_p2p(&sdata->vif)) {
 	case NL80211_IFTYPE_OCB:
-		/* OCB mode doesn't support scanning? */
+		/* pengzhou :  OCB mode doesn't support scanning */
 		printk("%s:%s OCB mode doesn't support scanning\n",__FILE__,__FUNCTION__);
 		return -EOPNOTSUPP;
 	case NL80211_IFTYPE_STATION:
@@ -2276,7 +2276,7 @@ static int ieee80211_auth(struct wiphy *wiphy, struct net_device *dev,
 			  struct cfg80211_auth_request *req)
 {
 	struct ieee80211_sub_if_data *sdata = IEEE80211_DEV_TO_SUB_IF(dev);
-		/* No authentication in OCB mode */
+		/* pengzhou : No authentication in OCB mode */
 	if((sdata->local->hw.wiphy->dot11OCBActivated == 1)) {
 		printk("%s:%s OCB mode doesn't support authentication\n",__FILE__,__FUNCTION__);
 		return -EOPNOTSUPP;
@@ -2288,7 +2288,7 @@ static int ieee80211_assoc(struct wiphy *wiphy, struct net_device *dev,
 			   struct cfg80211_assoc_request *req)
 {
 	struct ieee80211_sub_if_data *sdata = IEEE80211_DEV_TO_SUB_IF(dev);
-	/* No authentication in OCB mode */
+	/* pengzhou : No authentication in OCB mode */
 	if((sdata->local->hw.wiphy->dot11OCBActivated == 1)) {
 		printk("%s:%s OCB mode doesn't support association\n",__FILE__,__FUNCTION__);
 		return -EOPNOTSUPP;
@@ -2300,7 +2300,7 @@ static int ieee80211_deauth(struct wiphy *wiphy, struct net_device *dev,
 			    struct cfg80211_deauth_request *req)
 {
 	struct ieee80211_sub_if_data *sdata = IEEE80211_DEV_TO_SUB_IF(dev);
-	/* No authentication in OCB mode */
+	/* pengzhou : No authentication in OCB mode */
 	if((sdata->local->hw.wiphy->dot11OCBActivated == 1)) {
 		printk("%s:%s OCB mode doesn't support association\n",__FILE__,__FUNCTION__);
 		return -EOPNOTSUPP;
@@ -2312,7 +2312,7 @@ static int ieee80211_disassoc(struct wiphy *wiphy, struct net_device *dev,
 			      struct cfg80211_disassoc_request *req)
 {
 	struct ieee80211_sub_if_data *sdata = IEEE80211_DEV_TO_SUB_IF(dev);
-	/* No authentication in OCB mode */
+	/* pengzhou : No authentication in OCB mode */
 	if((sdata->local->hw.wiphy->dot11OCBActivated == 1)) {
 		printk("%s:%s OCB mode doesn't support association\n",__FILE__,__FUNCTION__);
 		return -EOPNOTSUPP;
@@ -3548,7 +3548,7 @@ static int ieee80211_cfg_get_channel(struct wiphy *wiphy,
 	} else if ((local->open_count > 0 &&
 		   local->open_count == local->monitors &&
 		   sdata->vif.type == NL80211_IFTYPE_MONITOR) ||
-		   sdata->vif.type == NL80211_IFTYPE_OCB) {
+		   sdata->vif.type == NL80211_IFTYPE_OCB) { /* pengzhou : add for 802.11p */
 		if (local->use_chanctx)
 			*chandef = local->monitor_chandef;
 		else

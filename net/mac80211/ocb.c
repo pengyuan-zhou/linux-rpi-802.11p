@@ -49,7 +49,7 @@ void ieee80211_ocb_rx_no_sta(struct ieee80211_sub_if_data *sdata,
 	enum nl80211_bss_scan_width scan_width;
 	struct sta_info *sta;
 	int band;
-
+        /* pengzhou : add for 802.11p */
 	if (!ifocb->joined)
 		return;
 
@@ -189,7 +189,7 @@ int ieee80211_ocb_join(struct ieee80211_sub_if_data *sdata,
 
 	if (ifocb->joined == true)
 		return -EINVAL;
-
+        /* pengzhou : add for 802.11p */
 	local->hw.wiphy->dot11OCBActivated = 1;
 
 	sdata->flags |= IEEE80211_SDATA_OPERATING_GMODE;
@@ -226,7 +226,7 @@ int ieee80211_ocb_leave(struct ieee80211_sub_if_data *sdata)
 	sta_info_flush(sdata);
 
 
-	/* added for 802.11p */
+	/* pengzhou : added for 802.11p */
 	local->hw.wiphy->dot11OCBActivated = 0;
 
 	spin_lock_bh(&ifocb->incomplete_lock);

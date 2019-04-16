@@ -114,7 +114,7 @@ enum ieee80211_channel_flags {
 	IEEE80211_CHAN_IR_CONCURRENT	= 1<<10,
 	IEEE80211_CHAN_NO_20MHZ		= 1<<11,
 	IEEE80211_CHAN_NO_10MHZ		= 1<<12,
-	IEEE80211_CHAN_OCB_ONLY		= 1<<13,
+	IEEE80211_CHAN_OCB_ONLY		= 1<<13,  /* pengzhou : add for 802.11p */
 };
 
 #define IEEE80211_CHAN_NO_HT40 \
@@ -434,6 +434,7 @@ static inline enum nl80211_channel_type
 cfg80211_get_chandef_type(const struct cfg80211_chan_def *chandef)
 {
 	switch (chandef->width) {
+	/* pengzhou : add for 802.11p */
  	case NL80211_CHAN_WIDTH_5:
 		return NL80211_CHAN_5MHZ;
 	case NL80211_CHAN_WIDTH_10:
@@ -3921,7 +3922,7 @@ struct wiphy {
 	u32 rts_threshold;
 	u8 coverage_class;
 
-	/* required by 802.11p */
+	/* pengzhou : required by 802.11p */
 	bool dot11OCBActivated;
 
 	char fw_version[ETHTOOL_FWVERS_LEN];

@@ -746,6 +746,7 @@ enum mac80211_tx_control_flags {
 	IEEE80211_TX_CTRL_RATE_INJECT		= BIT(2),
 	IEEE80211_TX_CTRL_AMSDU			= BIT(3),
 	IEEE80211_TX_CTRL_FAST_XMIT		= BIT(4),
+	/* pengzhou : add for 802.11p */
 	IEEE80211_TX_CTL_10MHZ			= BIT(5),
 	IEEE80211_TX_CTL_5MHZ			= BIT(6),
 };
@@ -1136,6 +1137,7 @@ enum mac80211_rx_flags {
 	RX_FLAG_ICV_STRIPPED		= BIT(23),
 	RX_FLAG_AMPDU_EOF_BIT		= BIT(24),
 	RX_FLAG_AMPDU_EOF_BIT_KNOWN	= BIT(25),
+	/* pengzhou : add for 802.11p */
 	RX_FLAG_10MHZ			= BIT(26),
 	RX_FLAG_5MHZ			= BIT(27),
 };
@@ -2133,6 +2135,7 @@ enum ieee80211_hw_flags {
 	IEEE80211_HW_SUPPORTS_TDLS_BUFFER_STA,
 	IEEE80211_HW_DEAUTH_NEED_MGD_TX_PREP,
 	IEEE80211_HW_DOESNT_SUPPORT_QOS_NDP,
+	/* pengzhou : add for 802.11p */
 	IEEE80211_HW_DOT11OCB_SUPPORTED,
 
 	/* keep last, obviously */

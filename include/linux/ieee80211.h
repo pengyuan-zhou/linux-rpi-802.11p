@@ -656,7 +656,7 @@ static inline bool ieee80211_is_frag(struct ieee80211_hdr *hdr)
 }
 
 
-
+/* pengzhou : add for 802.11p */
 /**
  * ieee80211_is_ocb - check if the frame is 802.11p compatible
  * @fc: frame control bytes in little-endian byteorder

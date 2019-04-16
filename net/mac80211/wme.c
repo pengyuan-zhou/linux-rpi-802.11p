@@ -247,7 +247,7 @@ void ieee80211_set_qos_hdr(struct ieee80211_sub_if_data *sdata,
 	p = ieee80211_get_qos_ctl(hdr);
 
                
-        //80211.p
+	/* pengzhou : add for 802.11p */
  	if(sdata->vif.type == NL80211_IFTYPE_OCB) {
  		/* do 802.11p stuff - make TID subfield csp to AC */
  		tid = sdata->vif.txq->ac & IEEE80211_QOS_CTL_TID_MASK;
