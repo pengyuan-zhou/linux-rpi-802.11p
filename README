@@ -8,15 +8,16 @@ https://github.com/p3n3troot0r/socketV2V
 
 https://ctu-iig.github.io/802.11p-linux/
 
-The code has been ran on RPI 3 B and RPI 3 B+
+
+The code has been ran on RPI 3 B and RPI 3 B+.
 
 For WIFI dongle, we used external dongle which supports freq range up to 5.8GHz.
 
 To address to the freq difference (IEEE 802.11p requires 5.9GHz, however none of 
 
-USB-Port dongle can support 5.9GHz), therefore we adapt the code towards so called
+USB-Port dongle can support 5.9GHz), we adapt the code towards so called
 
-"semi 802.11p", in the sense that it support all features of 802.11p, within freq range
+"semi 802.11p", in the sense that it supports all features of 802.11p, within freq range
 
 under 5.8GHz.
 
