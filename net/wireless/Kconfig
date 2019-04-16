@@ -177,10 +177,9 @@ config CFG80211_DEBUGFS
 
 config CFG80211_INTERNAL_REGDB
 	bool "use statically compiled regulatory rules database" if EXPERT
-	default n
+	default y
 	depends on CFG80211
 	---help---
-	  pengzhou: use external wireless-regdb to configure, for more flexibility
 	  This option generates an internal data structure representing
 	  the wireless regulatory rules described in net/wireless/db.txt
 	  and includes code to query that database. This is an alternative

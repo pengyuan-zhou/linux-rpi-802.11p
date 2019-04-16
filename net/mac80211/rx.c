@@ -56,7 +56,7 @@ static u8 *ieee80211_get_bssid(struct ieee80211_hdr *hdr, size_t len,
 
 		if (ieee80211_has_a4(fc))
 			return NULL;
-		if( type == NL80211_IFTYPE_OCB ) /*pengzhou: add for 802.11p */
+		if( type == NL80211_IFTYPE_OCB )
 			return hdr->addr3;
 
 		if (ieee80211_has_tods(fc))
@@ -273,7 +273,7 @@ ieee80211_add_rx_radiotap_header(struct ieee80211_local *local,
 	struct ieee80211_vendor_radiotap rtap = {};
 
 
-	/* pengzhou: debug for 802.11p */
+	/* debug for 802.11p */
 	/* TODO want to filter radiotap header special for OCB? */
 	if(local->hw.wiphy->dot11OCBActivated == 1) {
 		printk("%s:%s doing channel_flag stuff for ocb\n",__FILE__,__FUNCTION__);
@@ -661,7 +661,7 @@ ieee80211_rx_monitor(struct ieee80211_local *local, struct sk_buff *origskb,
 
 	only_monitor = should_drop_frame(origskb, present_fcs_len, rtap_space);
 
-	if (!local->monitors || (status->flag & RX_FLAG_SKIP_MONITOR) || local->hw.wiphy->dot11OCBActivated) { /*pengzhou: add for 802.11p */
+	if (!local->monitors || (status->flag & RX_FLAG_SKIP_MONITOR) || local->hw.wiphy->dot11OCBActivated) {
 		if (only_monitor) {
 			dev_kfree_skb(origskb);
 			return NULL;
@@ -2122,7 +2122,7 @@ ieee80211_rx_h_defragment(struct ieee80211_rx_data *rx)
 
 static int ieee80211_802_1x_port_control(struct ieee80211_rx_data *rx)
 {
-	if (unlikely(!rx->sta || (!test_sta_flag(rx->sta, WLAN_STA_AUTHORIZED) && !test_sta_flag(rx->sta, WLAN_STA_OCB)))) /*pengzhou: add for 802.11p */
+	if (unlikely(!rx->sta || (!test_sta_flag(rx->sta, WLAN_STA_AUTHORIZED) && !test_sta_flag(rx->sta, WLAN_STA_OCB))))
 		return -EACCES;
 
 	return 0;
@@ -2140,7 +2140,7 @@ static int ieee80211_drop_unencrypted(struct ieee80211_rx_data *rx, __le16 fc)
 	if (status->flag & RX_FLAG_DECRYPTED)
 		return 0;
 
-	/* pengzhou: Pass through unencrypted frames if OCB is activated */
+	/* Pass through unencrypted frames if OCB is activated */
 	if(rx->local->hw.wiphy->dot11OCBActivated == 1) {
 		return -EOPNOTSUPP;
 	}
@@ -2660,7 +2660,7 @@ ieee80211_rx_h_data(struct ieee80211_rx_data *rx)
 	if (unlikely(err))
 		return RX_DROP_UNUSABLE;
 
-	/* pengzhou: No need to check for authorizations in 802.11p */
+	/* No need to check for authorizations in 802.11p */
 	if(local->hw.wiphy->dot11OCBActivated == 0) {
 		if (!ieee80211_frame_allowed(rx, fc))
 			return RX_DROP_MONITOR;
@@ -3677,10 +3677,30 @@ static bool ieee80211_accept_frame(struct ieee80211_rx_data *rx)
 						 BIT(rate_idx));
 		}
 		return true;
-	case NL80211_IFTYPE_OCB: 
+	case NL80211_IFTYPE_OCB: /* TODO: fix this */
+		/* We accept: 	MGMT: TSF, action
+		*	CTL: ~{PSPOLL,CFEND,CFENDACK}
+		*	DATA: data, null, QoS data, QoS null 
+		*/
 		if (!bssid)
 			return false;
 
+		/*if (!multicast &&
+			!ether_addr_equal(sdata->vif.addr, hdr->addr3))	{
+			printk("%s:%s Group addr have wildcard BSSID\n",__FILE__,__FUNCTION__);
+			return false;
+		}
+
+		if (!multicast &&
+			!ether_addr_equal(sdata->dev->dev_addr, hdr->addr1)) {
+			printk("%s:%s bot mc and not addr1 addr \n",__FILE__,__FUNCTION__);
+			return false;
+		}*/
+		/* added for 802.11p 
+		if(!ieee80211_is_ocb(hdr->frame_control)) {
+			printk("%s:%s wrong frame type for OCB\n",__FILE__,__FUNCTION__);
+			//return false;
+		}*/
 
 		if (!ieee80211_is_data_present(hdr->frame_control))
 			return false;

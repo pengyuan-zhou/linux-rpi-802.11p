@@ -115,7 +115,7 @@ static u32 __ieee80211_recalc_idle(struct ieee80211_local *local,
 	active = force_active ||
 		 !list_empty(&local->chanctx_list) ||
 		 local->monitors ||
-		 local->ocbs; /*pengzhou: add for 802.11p */
+		 local->ocbs;
 
 	working = !local->ops->remain_on_channel &&
 		  !list_empty(&local->roc_list);
@@ -537,7 +537,7 @@ int ieee80211_do_open(struct wireless_dev *wdev, bool coming_up)
 		break;
 		}
 	case NL80211_IFTYPE_OCB:
-		/* pengzhou: set dot11OCBActivated to true */
+		/* set dot11OCBActivated to true */
 		local->hw.wiphy->dot11OCBActivated = 1;	
 		printk("%s:%s setting OCB active flags\n",__FILE__,__FUNCTION__);
 		break;
@@ -654,7 +654,7 @@ int ieee80211_do_open(struct wireless_dev *wdev, bool coming_up)
 		if (sdata->vif.type != NL80211_IFTYPE_P2P_DEVICE &&
 		    sdata->vif.type != NL80211_IFTYPE_NAN)
 			changed |= ieee80211_reset_erp_info(sdata);
-		/*pengzhou: add for 802.11p */
+
 		if (sdata->vif.type == NL80211_IFTYPE_OCB) {
 			printk("goto... local->ocbs++\n");
 			local->ocbs++;
@@ -664,9 +664,9 @@ int ieee80211_do_open(struct wireless_dev *wdev, bool coming_up)
 			changed |= BSS_CHANGED_BEACON;
 
 			/*
-			* Disable idle -- when chanctx will be used,
-			* this will be unnecessary
-			*/
+			* 			 * Disable idle -- when chanctx will be used,
+			* 			 			 * this will be unnecessary
+			* 			 			 			 */
 			sdata->vif.bss_conf.idle = false;
 			changed |= BSS_CHANGED_IDLE;
 
@@ -686,7 +686,7 @@ int ieee80211_do_open(struct wireless_dev *wdev, bool coming_up)
 			if(local->hw.wiphy->dot11OCBActivated == 1)
 				printk("%s:%s OCB activation worked\n",__FILE__,__FUNCTION__);
 
-			
+			/* TODO: Should we add the flags to mark as auth/assoc/etc here? */
 		}
 		ieee80211_bss_info_change_notify(sdata, changed);
 
@@ -1020,7 +1020,6 @@ static void ieee80211_do_stop(struct ieee80211_sub_if_data *sdata,
 
 		spin_unlock_bh(&sdata->u.nan.func_lock);
 		break;
-	/* pengzhou : add for 802.11p */
 	case NL80211_IFTYPE_OCB:
 		local->ocbs--;
 		if (local->ocbs == 0) {
@@ -1311,15 +1310,15 @@ static void ieee80211_iface_work(struct work_struct *work)
 			if (sta) {
 				switch (mgmt->u.action.u.addba_req.action_code) {
 				case WLAN_ACTION_ADDBA_REQ:
-					ieee802.11process_addba_request(
+					ieee80211_process_addba_request(
 							local, sta, mgmt, len);
 					break;
 				case WLAN_ACTION_ADDBA_RESP:
-					ieee802.11process_addba_resp(local, sta,
+					ieee80211_process_addba_resp(local, sta,
 								     mgmt, len);
 					break;
 				case WLAN_ACTION_DELBA:
-					ieee802.11process_delba(sdata, sta,
+					ieee80211_process_delba(sdata, sta,
 								mgmt, len);
 					break;
 				default:
@@ -1352,7 +1351,7 @@ static void ieee80211_iface_work(struct work_struct *work)
 				break;
 			}
 			case WLAN_VHT_ACTION_GROUPID_MGMT:
-				ieee802.11process_mu_groups(sdata, mgmt);
+				ieee80211_process_mu_groups(sdata, mgmt);
 				break;
 			default:
 				WARN_ON(1);
@@ -1400,7 +1399,12 @@ static void ieee80211_iface_work(struct work_struct *work)
 				break;
 			ieee80211_mesh_rx_queued_mgmt(sdata, skb);
 			break;
+		//case NL80211_IFTYPE_OCB:
+			//ieee80211_ocb_rx_queued_mgmt(sdata, skb);
+			//break;
 
+			//printk("%s:%s OCB mode unexpected frame type\n",__FILE__,__FUNCTION__);
+			/* TODO: Configure OCB to accept Action and TSF type mgmt frames */
 
 		default:
 			WARN(1, "frame for unexpected interface type");
@@ -1444,7 +1448,7 @@ static void ieee80211_recalc_smps_work(struct work_struct *work)
  */
 static void ieee80211_setup_sdata(struct ieee80211_sub_if_data *sdata,
 				  enum nl80211_iftype type)
-{	/* pengzhou: original code reports bug */
+{
 	static const u8 bssid_wildcard[ETH_ALEN] __aligned(2)= {0xff, 0xff, 0xff,
 						    0xff, 0xff, 0xff};
 
@@ -1863,7 +1867,7 @@ int ieee80211_if_add(struct ieee80211_local *local, const char *name,
 
 		/* don't use IEEE80211_DEV_TO_SUB_IF -- it checks too much */
 		sdata = netdev_priv(ndev);
-		ndev->ieee802.11ptr = &sdata->wdev;
+		ndev->ieee80211_ptr = &sdata->wdev;
 		memcpy(sdata->vif.addr, ndev->dev_addr, ETH_ALEN);
 		memcpy(sdata->name, ndev->name, IFNAMSIZ);
 
@@ -1925,7 +1929,7 @@ int ieee80211_if_add(struct ieee80211_local *local, const char *name,
 
 	if (ndev) {
 		if (params) {
-			ndev->ieee802.11ptr->use_4addr = params->use_4addr;
+			ndev->ieee80211_ptr->use_4addr = params->use_4addr;
 			if (type == NL80211_IFTYPE_STATION)
 				sdata->u.mgd.use_4addr = params->use_4addr;
 		}
@@ -2033,10 +2037,10 @@ static int netdev_notify(struct notifier_block *nb,
 	if (state != NETDEV_CHANGENAME)
 		return NOTIFY_DONE;
 
-	if (!dev->ieee802.11ptr || !dev->ieee802.11ptr->wiphy)
+	if (!dev->ieee80211_ptr || !dev->ieee80211_ptr->wiphy)
 		return NOTIFY_DONE;
 
-	if (dev->ieee802.11ptr->wiphy->privid != mac80211_wiphy_privid)
+	if (dev->ieee80211_ptr->wiphy->privid != mac80211_wiphy_privid)
 		return NOTIFY_DONE;
 
 	sdata = IEEE80211_DEV_TO_SUB_IF(dev);

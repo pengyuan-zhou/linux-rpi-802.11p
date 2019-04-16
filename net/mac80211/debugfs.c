@@ -214,7 +214,7 @@ static const char *hw_flag_names[] = {
 	FLAG(SUPPORTS_TDLS_BUFFER_STA),
 	FLAG(DEAUTH_NEED_MGD_TX_PREP),
 	FLAG(DOESNT_SUPPORT_QOS_NDP),
-	FLAG(DOT11OCB_SUPPORTED), /*pengzhou: add for 802.11p */
+	FLAG(DOT11OCB_SUPPORTED),
 #undef FLAG
 };
 

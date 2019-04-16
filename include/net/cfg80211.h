@@ -114,7 +114,7 @@ enum ieee80211_channel_flags {
 	IEEE80211_CHAN_IR_CONCURRENT	= 1<<10,
 	IEEE80211_CHAN_NO_20MHZ		= 1<<11,
 	IEEE80211_CHAN_NO_10MHZ		= 1<<12,
-	IEEE80211_CHAN_OCB_ONLY		= 1<<13,  /* pengzhou : add for 802.11p */
+	IEEE80211_CHAN_OCB_ONLY		= 1<<13,
 };
 
 #define IEEE80211_CHAN_NO_HT40 \
@@ -434,7 +434,6 @@ static inline enum nl80211_channel_type
 cfg80211_get_chandef_type(const struct cfg80211_chan_def *chandef)
 {
 	switch (chandef->width) {
-	/* pengzhou : add for 802.11p */
  	case NL80211_CHAN_WIDTH_5:
 		return NL80211_CHAN_5MHZ;
 	case NL80211_CHAN_WIDTH_10:
@@ -3723,7 +3722,7 @@ struct wiphy_iftype_ext_capab {
  * @frag_threshold: Fragmentation threshold (dot11FragmentationThreshold);
  *	-1 = fragmentation disabled, only odd values >= 256 used
  * @rts_threshold: RTS threshold (dot11RTSThreshold); -1 = RTS/CTS disabled
- * @dot11OCBActivated: the OCB mode is activated or not (IEEE 802.11p mode) /* pengzhou : add for 802.11p */
+ * @dot11OCBActivated: the OCB mode is activated or not (IEEE 802.11p mode)
  * @_net: the network namespace this wiphy currently lives in
  * @perm_addr: permanent MAC address of this device
  * @addr_mask: If the device supports multiple MAC addresses by masking,
@@ -3923,7 +3922,6 @@ struct wiphy {
 	u8 coverage_class;
 
 	/* required by 802.11p */
-	/* pengzhou : add for 802.11p */
 	bool dot11OCBActivated;
 
 	char fw_version[ETHTOOL_FWVERS_LEN];

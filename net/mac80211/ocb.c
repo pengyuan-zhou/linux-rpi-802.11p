@@ -49,8 +49,8 @@ void ieee80211_ocb_rx_no_sta(struct ieee80211_sub_if_data *sdata,
 	enum nl80211_bss_scan_width scan_width;
 	struct sta_info *sta;
 	int band;
-	/*pengzhou: add for 802.11p */
-	if (!ifocb->joined) 
+
+	if (!ifocb->joined)
 		return;
 
 	/* XXX: Consider removing the least recently used entry and
@@ -189,7 +189,7 @@ int ieee80211_ocb_join(struct ieee80211_sub_if_data *sdata,
 
 	if (ifocb->joined == true)
 		return -EINVAL;
-	/*pengzhou: add for 802.11p */
+
 	local->hw.wiphy->dot11OCBActivated = 1;
 
 	sdata->flags |= IEEE80211_SDATA_OPERATING_GMODE;
@@ -200,7 +200,6 @@ int ieee80211_ocb_join(struct ieee80211_sub_if_data *sdata,
 	err = ieee80211_vif_use_channel(sdata, &setup->chandef,
 					IEEE80211_CHANCTX_SHARED);
 	mutex_unlock(&sdata->local->mtx);
-	//pengzhou : current bug here
 	if (err){
 		printk("%s:%s ocb join error\n",__FILE__,__FUNCTION__);
 		return err;
@@ -227,7 +226,7 @@ int ieee80211_ocb_leave(struct ieee80211_sub_if_data *sdata)
 	sta_info_flush(sdata);
 
 
-	/* pengzhou: added for 802.11p */
+	/* added for 802.11p */
 	local->hw.wiphy->dot11OCBActivated = 0;
 
 	spin_lock_bh(&ifocb->incomplete_lock);

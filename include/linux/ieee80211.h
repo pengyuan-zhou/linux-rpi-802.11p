@@ -656,7 +656,7 @@ static inline bool ieee80211_is_frag(struct ieee80211_hdr *hdr)
 }
 
 
-/* pengzhou : add for 802.11p */
+
 /**
  * ieee80211_is_ocb - check if the frame is 802.11p compatible
  * @fc: frame control bytes in little-endian byteorder
@@ -709,21 +709,21 @@ struct ieee80211s_hdr {
 #define MESH_FLAGS_PS_DEEP	0x4
 
 /**
- * enum ieee802.11preq_flags - mesh PREQ element flags
+ * enum ieee80211_preq_flags - mesh PREQ element flags
  *
  * @IEEE80211_PREQ_PROACTIVE_PREP_FLAG: proactive PREP subfield
  */
-enum ieee802.11preq_flags {
+enum ieee80211_preq_flags {
 	IEEE80211_PREQ_PROACTIVE_PREP_FLAG	= 1<<2,
 };
 
 /**
- * enum ieee802.11preq_target_flags - mesh PREQ element per target flags
+ * enum ieee80211_preq_target_flags - mesh PREQ element per target flags
  *
  * @IEEE80211_PREQ_TO_FLAG: target only subfield
  * @IEEE80211_PREQ_USN_FLAG: unknown target HWMP sequence number subfield
  */
-enum ieee802.11preq_target_flags {
+enum ieee80211_preq_target_flags {
 	IEEE80211_PREQ_TO_FLAG	= 1<<0,
 	IEEE80211_PREQ_USN_FLAG	= 1<<2,
 };
@@ -1150,7 +1150,7 @@ struct ieee80211_cts {
 	u8 ra[ETH_ALEN];
 } __packed __aligned(2);
 
-struct ieee802.11pspoll {
+struct ieee80211_pspoll {
 	__le16 frame_control;
 	__le16 aid;
 	u8 bssid[ETH_ALEN];
@@ -1222,9 +1222,9 @@ struct ieee80211_tdls_data {
  * Peer-to-Peer IE attribute related definitions.
  */
 /**
- * enum ieee802.11p2p_attr_id - identifies type of peer-to-peer attribute.
+ * enum ieee80211_p2p_attr_id - identifies type of peer-to-peer attribute.
  */
-enum ieee802.11p2p_attr_id {
+enum ieee80211_p2p_attr_id {
 	IEEE80211_P2P_ATTR_STATUS = 0,
 	IEEE80211_P2P_ATTR_MINOR_REASON,
 	IEEE80211_P2P_ATTR_CAPABILITY,
@@ -1254,17 +1254,17 @@ enum ieee802.11p2p_attr_id {
 /* Typical max value used here */
 #define IEEE80211_P2P_NOA_DESC_MAX	4
 
-struct ieee802.11p2p_noa_desc {
+struct ieee80211_p2p_noa_desc {
 	u8 count;
 	__le32 duration;
 	__le32 interval;
 	__le32 start_time;
 } __packed;
 
-struct ieee802.11p2p_noa_attr {
+struct ieee80211_p2p_noa_attr {
 	u8 index;
 	u8 oppps_ctwindow;
-	struct ieee802.11p2p_noa_desc desc[IEEE80211_P2P_NOA_DESC_MAX];
+	struct ieee80211_p2p_noa_desc desc[IEEE80211_P2P_NOA_DESC_MAX];
 } __packed;
 
 #define IEEE80211_P2P_OPPPS_ENABLE_BIT		BIT(7)
@@ -2154,7 +2154,7 @@ enum ieee80211_key_len {
 #define PMK_MAX_LEN			64
 
 /* Public action codes (IEEE Std 802.11-2016, 9.6.8.1, Table 9-307) */
-enum ieee802.11pub_actioncode {
+enum ieee80211_pub_actioncode {
 	WLAN_PUB_ACTION_20_40_BSS_COEX = 0,
 	WLAN_PUB_ACTION_DSE_ENABLEMENT = 1,
 	WLAN_PUB_ACTION_DSE_DEENABLEMENT = 2,

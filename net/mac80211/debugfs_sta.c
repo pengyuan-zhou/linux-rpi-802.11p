@@ -80,7 +80,7 @@ static const char * const sta_flag_names[] = {
 	FLAG(MPSP_OWNER),
 	FLAG(MPSP_RECIPIENT),
 	FLAG(PS_DELIVER),
-	FLAG(OCB), /*pengzhou: add for 802.11p */
+	FLAG(OCB),
 #undef FLAG
 };
 

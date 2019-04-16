@@ -528,7 +528,7 @@ nl80211_bss_select_policy[NL80211_BSS_SELECT_ATTR_MAX + 1] = {
 static const struct nla_policy
 nl80211_nan_func_policy[NL80211_NAN_FUNC_ATTR_MAX + 1] = {
 	[NL80211_NAN_FUNC_TYPE] = { .type = NLA_U8 },
-	[NL80211_NAN_FUNC_SERVICE_ID] = {.type = NLA_BINARY, /*pengzhou: motivation to be found out */
+	[NL80211_NAN_FUNC_SERVICE_ID] = {.type = NLA_BINARY,
 				    .len = NL80211_NAN_FUNC_SERVICE_ID_LEN },
 	[NL80211_NAN_FUNC_PUBLISH_TYPE] = { .type = NLA_U8 },
 	[NL80211_NAN_FUNC_PUBLISH_BCAST] = { .type = NLA_FLAG },
@@ -694,7 +694,7 @@ static int nl80211_msg_put_channel(struct sk_buff *msg, struct wiphy *wiphy,
 	 * list to protect old user-space tools from breaking
 	 */
 	if (!large && chan->flags &
-	    (IEEE80211_CHAN_NO_10MHZ | IEEE80211_CHAN_NO_20MHZ | IEEE80211_CHAN_OCB_ONLY)) /* pengzhou: add for 802.11p */
+	    (IEEE80211_CHAN_NO_10MHZ | IEEE80211_CHAN_NO_20MHZ | IEEE80211_CHAN_OCB_ONLY))
 		return 0;
 
 	if (nla_put_u32(msg, NL80211_FREQUENCY_ATTR_FREQ,
@@ -1073,7 +1073,7 @@ static int nl80211_key_allowed(struct wireless_dev *wdev)
 
 	switch (wdev->iftype) {
 	case NL80211_IFTYPE_OCB:
-		/* pengzhou:no encryption in 802.11p */
+		/* no encryption in 802.11p */
 		return -EOPNOTSUPP;
 	case NL80211_IFTYPE_AP:
 	case NL80211_IFTYPE_AP_VLAN:
@@ -1476,7 +1476,7 @@ static int nl80211_add_commands_unsplit(struct cfg80211_registered_device *rdev,
 	CMD(disassoc, DISASSOCIATE);
 	CMD(join_ibss, JOIN_IBSS);
 	CMD(join_mesh, JOIN_MESH);
-	CMD(join_ocb, JOIN_OCB); /* pengzhou: add for 802.11p */
+	CMD(join_ocb, JOIN_OCB);
 	CMD(set_pmksa, SET_PMKSA);
 	CMD(del_pmksa, DEL_PMKSA);
 	CMD(flush_pmksa, FLUSH_PMKSA);
@@ -1621,8 +1621,8 @@ static int nl80211_send_wiphy(struct cfg80211_registered_device *rdev,
 		if ((rdev->wiphy.flags & WIPHY_FLAG_TDLS_EXTERNAL_SETUP) &&
 		    nla_put_flag(msg, NL80211_ATTR_TDLS_EXTERNAL_SETUP))
 			goto nla_put_failure;
-		/* pengzhou: add for 802.11p */
-		if((rdev->wiphy.flags & WIPHY_FLAG_SUPPORTS_5_10_MHZ) && 
+
+		if((rdev->wiphy.flags & WIPHY_FLAG_SUPPORTS_5_10_MHZ) &&
 			nla_put_flag(msg, WIPHY_FLAG_SUPPORTS_5_10_MHZ)) {
 				//printk("%s:%s:%s error using 5 and 10MHz channels\n",__FILE__,__FUNCTION__,__LINE__);
 				goto nla_put_failure;
@@ -2266,7 +2266,7 @@ static int nl80211_parse_chandef(struct cfg80211_registered_device *rdev,
 	if (!chandef->chan || chandef->chan->flags & IEEE80211_CHAN_DISABLED){
                 //pengzhou: chandef->chan is null
                 //printk("chandef->chan->flags is %u \n ", chandef->chan->flags);
-                printk("error 2 \n");
+                printk("eror 2 \n");
 		return -EINVAL;}
 
 	if (info->attrs[NL80211_ATTR_WIPHY_CHANNEL_TYPE]) {
@@ -2290,16 +2290,16 @@ static int nl80211_parse_chandef(struct cfg80211_registered_device *rdev,
 			if (info->attrs[NL80211_ATTR_CENTER_FREQ1] &&
 			    chandef->center_freq1 != nla_get_u32(
 					info->attrs[NL80211_ATTR_CENTER_FREQ1])){
-				printk("error 3 \n"); 
+				printk("eror 3 \n"); 
 				return -EINVAL;}
 			/* center_freq2 must be zero */
 			if (info->attrs[NL80211_ATTR_CENTER_FREQ2] &&
 			    nla_get_u32(info->attrs[NL80211_ATTR_CENTER_FREQ2])){
-				printk("error 4 \n"); 
+				printk("eror 4 \n"); 
 				return -EINVAL;}
 			break;
 		default:
-                        printk("error 5 \n"); 
+                        printk("eror 5 \n"); 
 			return -EINVAL;
 		}
 	} else if (info->attrs[NL80211_ATTR_CHANNEL_WIDTH]) {
@@ -2316,21 +2316,20 @@ static int nl80211_parse_chandef(struct cfg80211_registered_device *rdev,
 	}
 
 	if (!cfg80211_chandef_valid(chandef)){
-                printk("error 6 \n");
+                printk("eror 6 \n");
 		return -EINVAL;}
 
 	if (!cfg80211_chandef_usable(&rdev->wiphy, chandef,
 				     IEEE80211_CHAN_DISABLED)){
-                printk("error 7 \n"); 
+                printk("eror 7 \n"); 
 		return -EINVAL;}
 
 	if ((chandef->width == NL80211_CHAN_WIDTH_5 ||
 	     chandef->width == NL80211_CHAN_WIDTH_10) &&
 	    !(rdev->wiphy.flags & WIPHY_FLAG_SUPPORTS_5_10_MHZ)){
-		// pengzhou: current bug
                 printk("flags is %u, wiphy_flat is %u \n", rdev->wiphy.flags,WIPHY_FLAG_SUPPORTS_5_10_MHZ);
                 printk("flags & WIPHY_FLAG_SUPPORTS_5_10_MHZ is %u \n",rdev->wiphy.flags & WIPHY_FLAG_SUPPORTS_5_10_MHZ);
-                printk("error 8 \n");}
+                printk("eror 8 \n");}
 		//return -EINVAL;}
 
 	return 0;
@@ -2740,7 +2739,7 @@ static int nl80211_send_chandef(struct sk_buff *msg,
 			chandef->chan->center_freq))
 		return -ENOBUFS;
 	switch (chandef->width) {
-	case NL80211_CHAN_WIDTH_5: /* pengzhou: add for 802.11p */
+	case NL80211_CHAN_WIDTH_5:
 		//printk("%s:%s:%s 5MHz channel\n",__FILE__,__FUNCTION__,__LINE__);
 	case NL80211_CHAN_WIDTH_10:
 		//printk("%s:%s:%s 10MHz channel\n",__FILE__,__FUNCTION__,__LINE__);
@@ -8555,7 +8554,7 @@ static int nl80211_associate(struct sk_buff *skb, struct genl_info *info)
 	if (dev->ieee80211_ptr->iftype != NL80211_IFTYPE_STATION &&
 	    dev->ieee80211_ptr->iftype != NL80211_IFTYPE_P2P_CLIENT)
 		return -EOPNOTSUPP;
-	/* pengzhou: redundant for 802.11p  - association not supported */
+	/* redundant for 802.11p  - association not supported */
 	if(dev->ieee80211_ptr->iftype == NL80211_IFTYPE_OCB)
 		return -EOPNOTSUPP;
 
@@ -8741,7 +8740,7 @@ static int nl80211_disassociate(struct sk_buff *skb, struct genl_info *info)
 	    dev->ieee80211_ptr->iftype != NL80211_IFTYPE_P2P_CLIENT)
 		return -EOPNOTSUPP;
 
-	if(dev->ieee80211_ptr->iftype == NL80211_IFTYPE_OCB) /* pengzhou: add for 802.11p */
+	if(dev->ieee80211_ptr->iftype == NL80211_IFTYPE_OCB)
 		return -EOPNOTSUPP;
 	bssid = nla_data(info->attrs[NL80211_ATTR_MAC]);
 
@@ -8822,11 +8821,11 @@ static int nl80211_join_ibss(struct sk_buff *skb, struct genl_info *info)
 	if (err)
 		return err;
 
-	if (!rdev->ops->join_ibss && !rdev->ops->join_ocb) /* pengzhou: add for 802.11p */
+	if (!rdev->ops->join_ibss && !rdev->ops->join_ocb)
 		return -EOPNOTSUPP;
 
 	if ((dev->ieee80211_ptr->iftype != NL80211_IFTYPE_ADHOC)
-			&& (dev->ieee80211_ptr->iftype != NL80211_IFTYPE_OCB)) /* pengzhou: add for 802.11p */
+			&& (dev->ieee80211_ptr->iftype != NL80211_IFTYPE_OCB))
 		return -EOPNOTSUPP;
 
 	wiphy = &rdev->wiphy;
@@ -9916,7 +9915,7 @@ static int nl80211_tx_mgmt(struct sk_buff *skb, struct genl_info *info)
 			return -EINVAL;
 	case NL80211_IFTYPE_STATION:
 	case NL80211_IFTYPE_ADHOC:
-	case NL80211_IFTYPE_OCB: /* pengzhou: add for 802.11p */
+	case NL80211_IFTYPE_OCB:
 	case NL80211_IFTYPE_P2P_CLIENT:
 	case NL80211_IFTYPE_AP:
 	case NL80211_IFTYPE_AP_VLAN:

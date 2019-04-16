@@ -1570,7 +1570,7 @@ int ieee80211_vif_use_channel(struct ieee80211_sub_if_data *sdata,
 	ret = cfg80211_chandef_dfs_required(local->hw.wiphy,
 					    chandef,
 					    sdata->wdev.iftype);
-	//pengzhou: for debug
+	//pengzhou
         printk("tag1, ret is %d \n", ret);
 	if (ret < 0)
 		goto out;
@@ -1581,10 +1581,9 @@ int ieee80211_vif_use_channel(struct ieee80211_sub_if_data *sdata,
 
 	printk("%s:%s checling combinations \n",__FILE__,__FUNCTION__);
 
-	//pengzhou: current bug!!!
 	ret = ieee80211_check_combinations(sdata, chandef, mode,
 					   radar_detect_width);
-        //pengzhou: debug
+        //pengzhou
         printk("tag2, ret is %d \n", ret);
 	if (ret < 0)
 		goto out;
@@ -1615,7 +1614,7 @@ int ieee80211_vif_use_channel(struct ieee80211_sub_if_data *sdata,
 	ieee80211_recalc_smps_chanctx(local, ctx);
 	ieee80211_recalc_radar_chanctx(local, ctx);
  out:
-        //pengzhou: debug
+        //pengzhou
         printk("tag3, ret is %d \n", ret);
 	if (ret)
 		sdata->radar_required = false;

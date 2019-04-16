@@ -94,7 +94,7 @@
 #define ETH_P_MACSEC	0x88E5		/* 802.1ae MACsec */
 #define ETH_P_8021AH	0x88E7          /* 802.1ah Backbone Service Tag */
 #define ETH_P_MVRP	0x88F5          /* 802.1Q MVRP                  */
-#define ETH_P_WSMP	0x88DC          /* WAVE Short MSG protoco       */ /* pengzhou : add for 802.11p */
+#define ETH_P_WSMP	0x88DC          /* WAVE Short MSG protoco       */
 #define ETH_P_1588	0x88F7		/* IEEE 1588 Timesync */
 #define ETH_P_NCSI	0x88F8		/* NCSI protocol		*/
 #define ETH_P_PRP	0x88FB		/* IEC 62439-3 PRP/HSRv0	*/

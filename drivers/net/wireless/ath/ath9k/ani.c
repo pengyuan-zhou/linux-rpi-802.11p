@@ -326,7 +326,6 @@ void ath9k_ani_reset(struct ath_hw *ah, bool is_scanning)
 
 	if (is_scanning ||
 	    (ah->opmode != NL80211_IFTYPE_STATION &&
-	    //802.11p
 	    ah->opmode != NL80211_IFTYPE_OCB &&
 	     ah->opmode != NL80211_IFTYPE_ADHOC)) {
 		/*

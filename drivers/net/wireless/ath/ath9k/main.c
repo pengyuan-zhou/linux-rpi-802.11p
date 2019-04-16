@@ -1144,7 +1144,7 @@ void ath9k_calculate_summary_state(struct ath_softc *sc,
 	ath9k_hw_setopmode(ah);
 
 	ctx->switch_after_beacon = false;
-	if ((iter_data.nstations + iter_data.nadhocs + iter_data.nmeshes +iter_data.nocbs) > 0) /*pengzhou: add for 802.11p*/
+	if ((iter_data.nstations + iter_data.nadhocs + iter_data.nmeshes +iter_data.nocbs) > 0)
 		ah->imask |= ATH9K_INT_TSFOOR;
 	else {
 		ah->imask &= ~ATH9K_INT_TSFOOR;
@@ -1759,7 +1759,7 @@ static void ath9k_bss_info_changed(struct ieee80211_hw *hw,
 #define CHECK_ANI				\
 	(BSS_CHANGED_ASSOC |			\
 	 BSS_CHANGED_IBSS |			\
-	 BSS_CHANGED_OCB |			\ /*pengzhou: add for 802.11p*/
+	 BSS_CHANGED_OCB |			\
 	 BSS_CHANGED_BEACON_ENABLED)
 
 	struct ath_softc *sc = hw->priv;

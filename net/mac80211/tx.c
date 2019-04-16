@@ -592,8 +592,8 @@ ieee80211_tx_h_select_key(struct ieee80211_tx_data *tx)
 	if (unlikely(info->flags & IEEE80211_TX_INTFL_DONT_ENCRYPT))
 		tx->key = NULL;
 
-	else if(tx->sdata->vif.type == NL80211_IFTYPE_OCB) 
-		tx->key = NULL; // pengzhou: added for 802.11p
+	else if(tx->sdata->vif.type == NL80211_IFTYPE_OCB)
+		tx->key = NULL; // added for 802.11p
 
 	else if (tx->sta &&
 		 (key = rcu_dereference(tx->sta->ptk[tx->sta->ptk_idx])))
@@ -1016,8 +1016,8 @@ ieee80211_tx_h_encrypt(struct ieee80211_tx_data *tx)
 	if (!tx->key)
 		return TX_CONTINUE;
 
-	if(tx->sdata->vif.type == NL80211_IFTYPE_OCB) { 
-		/* pengzhou:no encryption done in 802.11p */
+	if(tx->sdata->vif.type == NL80211_IFTYPE_OCB) {
+		/* no encryption done in 802.11p */
 		return TX_CONTINUE;
 	}
 
@@ -1232,7 +1232,7 @@ ieee80211_tx_prepare(struct ieee80211_sub_if_data *sdata,
 	}
 
 
-	/* pengzhou : add for 802.11p */
+	/* just added this */
 	if ((sdata->vif.type == NL80211_IFTYPE_OCB) && (!tx->sta) &&
 	    (tx->flags & IEEE80211_TX_UNICAST)) {
 		printk("%s:%s Unicast rx no sta clause\n",__FILE__,__FUNCTION__);
@@ -1764,7 +1764,7 @@ static int invoke_tx_handlers_early(struct ieee80211_tx_data *tx)
 	} while (0)
 
 
-	/* pengzhou: 802.11p doesn't require these functions */
+	/* 802.11p doesn't require these functions */
 	if(tx->local->hw.wiphy->dot11OCBActivated == 0) {
 		CALL_TXH(ieee80211_tx_h_dynamic_ps);
 		CALL_TXH(ieee80211_tx_h_check_assoc);
@@ -1807,7 +1807,7 @@ static int invoke_tx_handlers_late(struct ieee80211_tx_data *tx)
 	}
 
 	if(tx->local->hw.wiphy->dot11OCBActivated == 0) {
-		/* pengzhou: 802.11p doesn't support encryption */
+		/* 802.11p doesn't support encryption */
 		CALL_TXH(ieee80211_tx_h_michael_mic_add);
 	}
 
@@ -1817,7 +1817,7 @@ static int invoke_tx_handlers_late(struct ieee80211_tx_data *tx)
 	/* handlers after fragment must be aware of tx info fragmentation! */
 	CALL_TXH(ieee80211_tx_h_stats);
 	if(tx->local->hw.wiphy->dot11OCBActivated == 0) {
-		/* pengzhou: 802.11p doesn't support encryption */
+		/* 802.11p doesn't support encryption */
 		CALL_TXH(ieee80211_tx_h_encrypt);
 	}
 	if (!ieee80211_hw_check(&tx->local->hw, HAS_RATE_CONTROL))
@@ -1979,7 +1979,7 @@ void ieee80211_xmit(struct ieee80211_sub_if_data *sdata,
 	int headroom;
 	bool may_encrypt;
 
-	may_encrypt = !(info->flags & IEEE80211_TX_INTFL_DONT_ENCRYPT) & !(local->hw.wiphy->dot11OCBActivated); /* pengzhou : add for 802.11p */
+	may_encrypt = !(info->flags & IEEE80211_TX_INTFL_DONT_ENCRYPT) & !(local->hw.wiphy->dot11OCBActivated);
 
 	headroom = local->tx_headroom;
 	if (may_encrypt)
@@ -2467,7 +2467,7 @@ static struct sk_buff *ieee80211_build_hdr(struct ieee80211_sub_if_data *sdata,
 	fc = cpu_to_le16(IEEE80211_FTYPE_DATA | IEEE80211_STYPE_DATA);
 
 	printk("%s:%s b4 hdr config \n",__FILE__,__FUNCTION__);
-	static const u8 bssid_wildcard[ETH_ALEN] __aligned(2) /* pengzhou : add for 802.11p */
+	static const u8 bssid_wildcard[ETH_ALEN] __aligned(2)
 		= { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
 
 	switch (sdata->vif.type) {
@@ -2635,17 +2635,17 @@ static struct sk_buff *ieee80211_build_hdr(struct ieee80211_sub_if_data *sdata,
 	case NL80211_IFTYPE_OCB:
 		/* DA SA BSSID */
 		printk("%s:%s configuring ocb hdr \n",__FILE__,__FUNCTION__);
-		multicast = true; 
+		multicast = true;
 		memcpy(hdr.addr1, skb->data, ETH_ALEN);
 		memcpy(hdr.addr2, skb->data + ETH_ALEN, ETH_ALEN);
-		memcpy(hdr.addr3, bssid_wildcard, ETH_ALEN); /*pengzhou: to be found out motivation*/
+		memcpy(hdr.addr3, bssid_wildcard, ETH_ALEN);
 		hdrlen = 24;
 		chanctx_conf = rcu_dereference(sdata->vif.chanctx_conf);
 		if (!chanctx_conf) {
 			ret = -ENOTCONN;
 			goto free;
 		}
-		band = NL80211_BAND_5GHZ; /*pengzhou: add for 802.11p */
+		band = NL80211_BAND_5GHZ;
 		break;
 	case NL80211_IFTYPE_ADHOC:
 		/* DA SA BSSID */
@@ -2678,14 +2678,14 @@ static struct sk_buff *ieee80211_build_hdr(struct ieee80211_sub_if_data *sdata,
 	}
 
 	if(sdata->vif.type == NL80211_IFTYPE_OCB) {
-		/* pengzhou: making OCB authorized to tx/rx by default - necessary for 802.11p ?*/
+		/* making OCB authorized to tx/rx by default - necessary for 802.11p ?*/
 	//	if(sta) {
 		//	set_sta_flag(sta,WLAN_STA_AUTHORIZED);
  		set_sta_flag(sta,WLAN_STA_OCB);
  		multicast = is_multicast_ether_addr(hdr.addr3);
 			//}
 		/* setting OCB for 802.11p */
-		//wme_sta = true;
+//wme_sta = true;
 	}
 
 	/* receiver does QoS (which also means we do) use it */
@@ -2819,7 +2819,7 @@ static struct sk_buff *ieee80211_build_hdr(struct ieee80211_sub_if_data *sdata,
 	} else
 		memcpy(skb_push(skb, hdrlen), &hdr, hdrlen);
 
-	// pengzhou: flags to bypass state machine
+	// flags to bypass state machine
 	if (local->hw.wiphy->dot11OCBActivated ) {
 		printk("%s:%s setting OCB flags to bypass state machine \n",__FILE__,__FUNCTION__);
 		info_flags |= IEEE80211_TX_INTFL_DONT_ENCRYPT;
@@ -2870,7 +2870,7 @@ void ieee80211_check_fast_xmit(struct sta_info *sta)
 	struct ieee80211_hdr *hdr = (void *)build.hdr;
 	struct ieee80211_chanctx_conf *chanctx_conf;
 	__le16 fc;
-	static const u8 bssid_wildcard[ETH_ALEN] __aligned(2) /*pengzhou: add for 802.11p */
+	static const u8 bssid_wildcard[ETH_ALEN] __aligned(2)
 		= { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
 
 	printk("%s:%s checking fast xmit init\n",__FILE__,__FUNCTION__);
@@ -2988,7 +2988,7 @@ void ieee80211_check_fast_xmit(struct sta_info *sta)
 		build.hdr_len = 24;
 		break;
 
-	case NL80211_IFTYPE_OCB:  /*pengzhou: add for 802.11p */
+	case NL80211_IFTYPE_OCB:
 		printk("%s:%s OCB not configured for fast xmit\n",__FILE__,__FUNCTION__);
 		/* DA SA BSSID */
 		build.da_offs = offsetof(struct ieee80211_hdr, addr1);
@@ -3011,7 +3011,7 @@ void ieee80211_check_fast_xmit(struct sta_info *sta)
 	 * this function after doing so. For a single CPU that would be enough,
 	 * for multiple see the comment above.
 	 */
-if(sdata->vif.type != NL80211_IFTYPE_OCB) {  /*pengzhou: add for 802.11p */
+if(sdata->vif.type != NL80211_IFTYPE_OCB) {
 	build.key = rcu_access_pointer(sta->ptk[sta->ptk_idx]);
 	if (!build.key)
 		build.key = rcu_access_pointer(sdata->default_unicast_key);
@@ -4304,7 +4304,7 @@ __ieee80211_beacon_get(struct ieee80211_hw *hw,
 
 
 	if(sdata->vif.type == NL80211_IFTYPE_OCB) {
-		/* pengzhou: No probing with 802.11p */
+		/* No probing with 802.11p */
 		printk("%s:%s no beacon with OCB\n",__FILE__,__FUNCTION__);
 		return NULL;
 	}
@@ -4524,7 +4524,7 @@ struct sk_buff *ieee80211_proberesp_get(struct ieee80211_hw *hw,
 	struct ieee80211_sub_if_data *sdata = vif_to_sdata(vif);
 
 	if(sdata->vif.type == NL80211_IFTYPE_OCB) {
-		/* pengzhou: No probing with 802.11p */
+		/* No probing with 802.11p */
 		printk("%s:%s no probing with OCB\n",__FILE__,__FUNCTION__);
 		return NULL;
 	}
@@ -4670,7 +4670,7 @@ struct sk_buff *ieee80211_probereq_get(struct ieee80211_hw *hw,
 
 	/* TODO: is this needed? */
 	if(local->hw.wiphy->dot11OCBActivated == 1) {
-		/* pengzhou: No probing with 802.11p */
+		/* No probing with 802.11p */
 		printk("%s:%s no probing with OCB\n",__FILE__,__FUNCTION__);
 		return NULL;
 	}

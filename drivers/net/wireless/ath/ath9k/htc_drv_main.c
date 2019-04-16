@@ -175,8 +175,8 @@ static void ath9k_htc_set_opmode(struct ath9k_htc_priv *priv)
 		priv->ah->opmode = NL80211_IFTYPE_AP;
 	else if (priv->num_mbss_vif)
 		priv->ah->opmode = NL80211_IFTYPE_MESH_POINT;
-	else if(priv->num_ocb_vif) /* pengzhou: added for 802.11p */
-		priv->ah->opmode = NL80211_IFTY<PE_OCB;
+	else if(priv->num_ocb_vif) /* added for 802.11p */
+		priv->ah->opmode = NL80211_IFTYPE_OCB;
 	else
 		priv->ah->opmode = NL80211_IFTYPE_STATION;
 
@@ -1056,7 +1056,6 @@ static int ath9k_htc_add_interface(struct ieee80211_hw *hw,
 	case NL80211_IFTYPE_ADHOC:
 		hvif.opmode = HTC_M_IBSS;
 		break;
-	//pengzhou: add for 802.11p
 	case NL80211_IFTYPE_OCB:
 		hvif.opmode = HTC_M_MONITOR;
 		break;
@@ -1489,7 +1488,6 @@ static void ath9k_htc_set_bssid(struct ath9k_htc_priv *priv)
 
 static void ath9k_htc_bss_iter(void *data, u8 *mac, struct ieee80211_vif *vif)
 {
-	//pengzhou: original code reports bug during compiling
 	struct ath9k_htc_priv *priv = (struct ath9k_htc_priv *)data;
 	struct ath_common *common = ath9k_hw_common(priv->ah);
 	struct ieee80211_bss_conf *bss_conf = &vif->bss_conf;
@@ -1689,7 +1687,7 @@ static int ath9k_htc_ampdu_action(struct ieee80211_hw *hw,
 		ath9k_htc_tx_aggr_oper(priv, vif, sta, action, tid);
 		ieee80211_stop_tx_ba_cb_irqsafe(vif, sta->addr, tid);
 		break;
-	case IEEE80211_AMPDU_TX_OPERATIONAL: /*pengzhou: original code reports bug */
+	case IEEE80211_AMPDU_TX_OPERATIONAL:
 		ista = (struct ath9k_htc_sta *) sta->drv_priv;
 		spin_lock_bh(&priv->tx.tx_lock);
 		ista->tid_state[tid] = AGGR_OPERATIONAL;
