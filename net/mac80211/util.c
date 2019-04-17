@@ -3410,14 +3410,17 @@ int ieee80211_check_combinations(struct ieee80211_sub_if_data *sdata,
 
 	if (WARN_ON(hweight32(radar_detect) > 1))
 		return -EINVAL;
+        printk("chanc tag 1 \n");
 
 	if (WARN_ON(chandef && chanmode == IEEE80211_CHANCTX_SHARED &&
 		    !chandef->chan))
 		return -EINVAL;
+        printk("chanc tag 2 \n");
 
 	if (WARN_ON(iftype >= NUM_NL80211_IFTYPES))
 		return -EINVAL;
 
+        printk("chanc tag 3 \n");
 	if (sdata->vif.type == NL80211_IFTYPE_AP ||
 	    sdata->vif.type == NL80211_IFTYPE_MESH_POINT) {
 		/*
@@ -3430,11 +3433,13 @@ int ieee80211_check_combinations(struct ieee80211_sub_if_data *sdata,
 
 	/* Always allow software iftypes */
 	if (local->hw.wiphy->software_iftypes & BIT(iftype)) {
-		if (radar_detect)
-			return -EINVAL;
+		if (radar_detect)//{
+                        printk("bug is here!!!");
+			//return -EINVAL;}
 		return 0;
 	}
 
+        printk("chanc tag 4 \n");
 	if (chandef)
 		params.num_different_channels = 1;
 

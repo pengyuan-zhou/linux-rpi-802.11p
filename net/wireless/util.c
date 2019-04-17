@@ -127,6 +127,8 @@ struct ieee80211_channel *ieee80211_get_channel(struct wiphy *wiphy, int freq)
 			continue;
 
 		for (i = 0; i < sband->n_channels; i++) {
+                        //pengzhou: to show the correct freq values to help configure
+                        //printk("band's center freq is %d \n",sband->channels[i].center_freq);
 			if (sband->channels[i].center_freq == freq)
 				return &sband->channels[i];
 		}

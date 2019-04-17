@@ -2254,9 +2254,8 @@ static int nl80211_parse_chandef(struct cfg80211_registered_device *rdev,
 		return -EINVAL;
 
 	control_freq = nla_get_u32(info->attrs[NL80211_ATTR_WIPHY_FREQ]);
-        //pengzhou: control freq is fine
         printk("control_freq is %d \n", control_freq);
-        //pengzhou chandef-> chan has problem 
+        //pengzhou chandef-> chan has problem !!!! This is the real bug!
 	chandef->chan = ieee80211_get_channel(&rdev->wiphy, control_freq);
         printk("redv->wiphy->interface_modes is %u\n", rdev->wiphy.interface_modes); 
 	chandef->width = NL80211_CHAN_WIDTH_20_NOHT;
@@ -2290,17 +2289,14 @@ static int nl80211_parse_chandef(struct cfg80211_registered_device *rdev,
 			/* user input for center_freq is incorrect */
 			if (info->attrs[NL80211_ATTR_CENTER_FREQ1] &&
 			    chandef->center_freq1 != nla_get_u32(
-					info->attrs[NL80211_ATTR_CENTER_FREQ1])){
-				printk("error 3 \n"); 
-				return -EINVAL;}
+					info->attrs[NL80211_ATTR_CENTER_FREQ1]))
+				return -EINVAL;
 			/* center_freq2 must be zero */
 			if (info->attrs[NL80211_ATTR_CENTER_FREQ2] &&
-			    nla_get_u32(info->attrs[NL80211_ATTR_CENTER_FREQ2])){
-				printk("error 4 \n"); 
-				return -EINVAL;}
+			    nla_get_u32(info->attrs[NL80211_ATTR_CENTER_FREQ2]))
+				return -EINVAL;
 			break;
 		default:
-                        printk("error 5 \n"); 
 			return -EINVAL;
 		}
 	} else if (info->attrs[NL80211_ATTR_CHANNEL_WIDTH]) {
@@ -2316,22 +2312,18 @@ static int nl80211_parse_chandef(struct cfg80211_registered_device *rdev,
 					info->attrs[NL80211_ATTR_CENTER_FREQ2]);
 	}
 
-	if (!cfg80211_chandef_valid(chandef)){
-                printk("error 6 \n");
-		return -EINVAL;}
+	if (!cfg80211_chandef_valid(chandef))
+		return -EINVAL;
 
 	if (!cfg80211_chandef_usable(&rdev->wiphy, chandef,
-				     IEEE80211_CHAN_DISABLED)){
-                printk("error 7 \n"); 
-		return -EINVAL;}
+				     IEEE80211_CHAN_DISABLED))
+		return -EINVAL;
 
 	if ((chandef->width == NL80211_CHAN_WIDTH_5 ||
 	     chandef->width == NL80211_CHAN_WIDTH_10) &&
-	    !(rdev->wiphy.flags & WIPHY_FLAG_SUPPORTS_5_10_MHZ)){
-                printk("flags is %u, wiphy_flat is %u \n", rdev->wiphy.flags,WIPHY_FLAG_SUPPORTS_5_10_MHZ);
-                printk("flags & WIPHY_FLAG_SUPPORTS_5_10_MHZ is %u \n",rdev->wiphy.flags & WIPHY_FLAG_SUPPORTS_5_10_MHZ);
-                printk("error 8 \n");}
-		//return -EINVAL;}
+	    !(rdev->wiphy.flags & WIPHY_FLAG_SUPPORTS_5_10_MHZ))//{
+                printk("error 8 \n");
+		//return -EINVAL;} //pengzhou: unknown reason, disable for now 
 
 	return 0;
 }

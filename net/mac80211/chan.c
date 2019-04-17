@@ -1574,13 +1574,15 @@ int ieee80211_vif_use_channel(struct ieee80211_sub_if_data *sdata,
         printk("tag1, ret is %d \n", ret);
 	if (ret < 0)
 		goto out;
-	if (ret > 0)
+	if (ret > 0){
 		radar_detect_width = BIT(chandef->width);
+                printk("radar_detect_width is %d \n",radar_detect_width);}
 
 	sdata->radar_required = ret;
 
 	printk("%s:%s checling combinations \n",__FILE__,__FUNCTION__);
 
+        printk("mode is %d \n", mode);
 	ret = ieee80211_check_combinations(sdata, chandef, mode,
 					   radar_detect_width);
         //pengzhou debug
