@@ -2,6 +2,8 @@ Repo for IEEE 802.11p supported Raspberry Pi kernel.
 
 The kernel is based on official RPI kernel, branch=rpi-4.18.y.
 
+https://github.com/raspberrypi/linux/tree/rpi-4.18.y
+
 The 802.11p relevant code is based on several relevant works, e.g., 
 
 https://github.com/p3n3troot0r/socketV2V
@@ -11,7 +13,7 @@ https://ctu-iig.github.io/802.11p-linux/
 
 The code has been ran on RPI 3 B and RPI 3 B+.
 
-For WIFI dongle, we used external dongle which supports freq range up to 5.8GHz.
+For WIFI dongle, we used external dongle which supports freq range up to 5.825GHz.
 
 To address to the freq difference (IEEE 802.11p requires 5.9GHz, however none of 
 
@@ -22,9 +24,7 @@ USB-Port dongle can support 5.9GHz), we adapt the code towards so called
 under 5.8GHz.
 
 
-
 For changed files, refer to change.txt
 
-For bugs, refer to bug.txt.
 
 
