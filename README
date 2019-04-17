@@ -21,7 +21,7 @@ USB-Port dongle can support 5.9GHz), we adapt the code towards so called
 
 "semi 802.11p", in the sense that it supports all features of 802.11p, within freq range
 
-under 5.8GHz.
+under 5.9GHz.
 
 
 For changed files, refer to change.txt
