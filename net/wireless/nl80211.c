@@ -2255,7 +2255,6 @@ static int nl80211_parse_chandef(struct cfg80211_registered_device *rdev,
 
 	control_freq = nla_get_u32(info->attrs[NL80211_ATTR_WIPHY_FREQ]);
         printk("control_freq is %d \n", control_freq);
-        //pengzhou chandef-> chan has problem !!!! This is the real bug!
 	chandef->chan = ieee80211_get_channel(&rdev->wiphy, control_freq);
         printk("redv->wiphy->interface_modes is %u\n", rdev->wiphy.interface_modes); 
 	chandef->width = NL80211_CHAN_WIDTH_20_NOHT;
@@ -2264,8 +2263,6 @@ static int nl80211_parse_chandef(struct cfg80211_registered_device *rdev,
 
 	/* Primary channel not allowed */
 	if (!chandef->chan || chandef->chan->flags & IEEE80211_CHAN_DISABLED){
-                //pengzhou: chandef->chan is null
-                //printk("chandef->chan->flags is %u \n ", chandef->chan->flags);
                 printk("error 2 \n");
 		return -EINVAL;}
 
@@ -2323,7 +2320,7 @@ static int nl80211_parse_chandef(struct cfg80211_registered_device *rdev,
 	     chandef->width == NL80211_CHAN_WIDTH_10) &&
 	    !(rdev->wiphy.flags & WIPHY_FLAG_SUPPORTS_5_10_MHZ))//{
                 printk("error 8 \n");
-		//return -EINVAL;} //pengzhou: unknown reason, disable for now 
+		//return -EINVAL;} //pengzhou: wiphy.flags differs from WIPHY_FLAG_SUPPORTS_5_10_MHZ, might because of hardware specification
 
 	return 0;
 }

@@ -61,8 +61,8 @@ bool cfg80211_chandef_valid(const struct cfg80211_chan_def *chandef)
 {
 	u32 control_freq;
 
-	if (!chandef->chan){
-		return false;}
+	if (!chandef->chan)
+		return false;
 
 	control_freq = chandef->chan->center_freq;
 
@@ -71,10 +71,10 @@ bool cfg80211_chandef_valid(const struct cfg80211_chan_def *chandef)
 	case NL80211_CHAN_WIDTH_10:
 	case NL80211_CHAN_WIDTH_20:
 	case NL80211_CHAN_WIDTH_20_NOHT:
-		if (chandef->center_freq1 != control_freq){
-			return false;}
-		if (chandef->center_freq2){
-			return false;}
+		if (chandef->center_freq1 != control_freq)
+			return false;
+		if (chandef->center_freq2)
+			return false;
 		break;
 	case NL80211_CHAN_WIDTH_40:
 		if (chandef->center_freq1 != control_freq + 10 &&
