@@ -6,9 +6,10 @@ https://github.com/raspberrypi/linux/tree/rpi-4.18.y
 
 The 802.11p relevant code is based on several relevant works, e.g., 
 
+http://linux-kernel.2935.n7.nabble.com/PATCH-0-4-802-11p-OCB-mode-td941310.html
+
 https://github.com/p3n3troot0r/socketV2V
 
-https://ctu-iig.github.io/802.11p-linux/
 
 
 The code has been ran on RPI 3 B and RPI 3 B+.
