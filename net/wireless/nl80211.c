@@ -2376,6 +2376,7 @@ static int __nl80211_set_channel(struct cfg80211_registered_device *rdev,
 	case NL80211_IFTYPE_MESH_POINT:
 		result = cfg80211_set_mesh_channel(rdev, wdev, &chandef);
 		break;
+	case NL80211_IFTYPE_OCB:
 	case NL80211_IFTYPE_MONITOR:
 		result = cfg80211_set_monitor_channel(rdev, &chandef);
 		break;
